@@ -41,3 +41,70 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# New additions for Flutter, Firebase, and platform-specific directories
+# Flutter/Dart/Pub related
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+/build/
+
+# ALL OSs
+android/
+ios/
+windows/
+linux/
+macos/
+
+# Firebase
+firebase_options.dart
+firebase.json
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Miscellaneous additions
+*.DS_Store
+*.log
+*.keystore
+*.pem
+
+# IntelliJ related additions
+*.iml
+.idea/
+.idea/**/workspace.xml
+.idea/**/tasks.xml
+.idea/**/usage.statistics.xml
+.idea/**/dictionaries
+.idea/**/vcs.xml
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/runConfigurations
+.idea/gradle.xml
+.idea/assetWizardSettings.xml
+.idea/compiler.xml
+
+# VS Code related
+.vscode/
+.history/
+.idea/
+
+# Flutter specific
+.flutter-plugins
+.flutter-plugins-dependencies
+.dart_tool/
+.packages
+.pub-cache/
+build/
+
+# Web related
+lib/generated_plugin_registrant.dart
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.lock
