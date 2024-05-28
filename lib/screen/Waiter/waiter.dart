@@ -37,7 +37,7 @@ class _WaiterState extends State<Waiter> {
         future: _currentUserFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(
+            return const Center(
               child: CircularProgressIndicator(),
             );
           }

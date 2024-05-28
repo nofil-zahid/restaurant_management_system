@@ -41,6 +41,7 @@ class _TableManageState extends State<TableManage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Table Manage"),
+        backgroundColor: Colors.green,
       ),
       body: Column(
         children: [
