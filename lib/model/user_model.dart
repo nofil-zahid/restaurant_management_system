@@ -1,28 +1,23 @@
-// models/user.dart
 class User {
-  final int userId;
-  final String userName;
-  final int roleId;
+  String name;
+  String password;
+  String role;
 
-  User({
-    required this.userId,
-    required this.userName,
-    required this.roleId,
-  });
+  User({required this.name, required this.password, required this.role});
 
-  Map<String, dynamic> toMap() {
-    return {
-      'user_id': userId,
-      'user_name': userName,
-      'role_id': roleId,
-    };
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      name: json['name'],
+      password: json['password'],
+      role: json['role'],
+    );
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
-      userId: map['user_id'],
-      userName: map['user_name'],
-      roleId: map['role_id'],
-    );
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'password': password,
+      'role': role,
+    };
   }
 }
