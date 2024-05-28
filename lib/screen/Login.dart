@@ -1,7 +1,5 @@
-// ignore_for_file: constant_pattern_never_matches_value_type, avoid_print, use_build_context_synchronously
-
 import 'package:flutter/material.dart';
-import 'package:restaurant_management_system/database/database_service.dart';
+import 'package:restaurant_management_system/database/firestore_services.dart';
 import 'package:restaurant_management_system/services/SharedPref_Helper.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,111 +13,128 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  Map<String, String> admin = {};
+  Map<String, String> manager = {};
+  Map<String, String> waiter = {};
+
   late SharedPref pref;
-  late DatabaseService _databaseService;
+  late Future<void> _initFuture;
 
   @override
   void initState() {
     super.initState();
-    // local-storage
-    initiatePreference();
-    // db storage
-    _databaseService = DatabaseService();
-    _databaseService.openDatabaseConnection();
+    _initFuture = initiatePreference();
   }
 
-  void initiatePreference() async {
+  Future<void> initiatePreference() async {
     pref = SharedPref();
     await pref.init();
+    List<dynamic> fetchedUsers = await getAllUsers();
+    print(fetchedUsers);
+
+    // Filter users based on their roles
+    if (fetchedUsers.isNotEmpty) {
+      for (var user in fetchedUsers) {
+        String? username = user['name'] ?? user['emp_name'];
+        String? password = user['password'];
+        String? role = user['role']?['role_des'];
+
+        if (username != null && password != null) {
+          switch (role) {
+            case 'admin':
+              admin[username] = password;
+              break;
+            case 'manager':
+              manager[username] = password;
+              break;
+            case 'waiter':
+              waiter[username] = password;
+              break;
+            default:
+              // Handle users with no or unknown role
+              break;
+          }
+        }
+      }
+
+      print("==== admin ====");
+      print(admin);
+      print("==== manager ====");
+      print(manager);
+      print("==== waiter ====");
+      print(waiter);
+    }
   }
 
   Future<void> _login() async {
-
     String username = _usernameController.text;
     String password = _passwordController.text;
 
-    List<String> admin = ["nofil"];
-    List<String> manager = ["daniyal", "osama", "waseem"];
-    List<String> waiter = ["ziyan", "haseeb", "ahsan", "usman", "ahmad", "anwar", "ahtasham"];
-
-    if (admin.contains(username) && (password=="admin")) {
+    if (admin.containsKey(username) && admin[username] == password) {
       await pref.setValue("ROLE", "admin");
+      await pref.setValue("USER", username);
       Navigator.pushNamed(context, "/admin");
-    }
-    else if (manager.contains(username) && (password=="passM")) {
+    } else if (manager.containsKey(username) && manager[username] == password) {
       await pref.setValue("ROLE", "manager");
+      await pref.setValue("USER", username);
       Navigator.pushNamed(context, "/m-home");
-    }
-    else if (waiter.contains(username) && (password=="passW")) {
+    } else if (waiter.containsKey(username) && waiter[username] == password) {
       await pref.setValue("ROLE", "waiter");
+      await pref.setValue("USER", username);
       Navigator.pushNamed(context, "/w-home");
+    } else if (username.trim().isEmpty || password.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('EMPTY FIELDS'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('INCORRECT USERNAME OR PASSWORD'),
+          duration: Duration(seconds: 3),
+        ),
+      );
     }
-    else {
-      print("INCORRECT CREDENTIALS");
-    }
-
-    // Map<String, dynamic>? userData = await _databaseService.authenticateUser(username, password);
-    // print(username);
-    // if (userData != null) {
-    //   // User authenticated successfully
-    //   // Here you can store user data in shared preferences or proceed to another screen
-    //   print('User authenticated: $userData');
-    // } else {
-    //   // Invalid credentials or user not found
-    //   print('Invalid credentials');
-    // }
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(labelText: 'Password'),
-              obscureText: true,
-            ),
-            const SizedBox(height: 16.0),
-            ElevatedButton(
-              onPressed: _login,
-              child: const Text('Login'),
-            ),
-            // ElevatedButton(
-            //   onPressed: () {
-            //     print("username=> ${_usernameController.text}");
-            //     print("password => ${_passwordController.text}");
-
-            //     switch (_usernameController.text) {
-            //       case "manager":
-            //         Navigator.pushNamed(context, "/manager-home");
-            //         break;
-            //       case "waiter":
-            //         Navigator.pushNamed(context, "/waiter-home");
-            //         break;
-            //       case "admin":
-            //         // Navigator.pushNamed(context, "/admin");
-            //         print("ABHI SBR KR");
-            //         break;
-            //       default:
-            //         print("CHLA KI LBDA PHIRE, SALAY DA GHR KOI NAAA... LOKA TO PUCHDA PHIRE");
-            //     }
-            //   },
-            //   child: const Text('Login'),
-            // ),
-          ],
-        ),
+      body: FutureBuilder(
+        future: _initFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Error loading data'));
+          } else {
+            return Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  TextField(
+                    controller: _usernameController,
+                    decoration: const InputDecoration(labelText: 'Username'),
+                  ),
+                  TextField(
+                    controller: _passwordController,
+                    decoration: const InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                  ),
+                  const SizedBox(height: 16.0),
+                  ElevatedButton(
+                    onPressed: _login,
+                    child: const Text('Login'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
       ),
     );
   }

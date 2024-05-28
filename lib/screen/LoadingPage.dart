@@ -14,6 +14,9 @@ class _LoadingScreenState extends State<LoadingScreen> {
   @override
   void initState() {
     super.initState();
+    // if (Navigator.of(context).canPop()) {
+    //   Navigator.of(context).popUntil((route) => route.isFirst);
+    // }
     Timer(const Duration(seconds: 3), () {
       Navigator.pushReplacement(
         context,
