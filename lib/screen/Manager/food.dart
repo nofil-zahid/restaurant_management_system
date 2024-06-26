@@ -79,13 +79,11 @@ class _FoodState extends State<Food> {
               Center(
                   child: IconButton(
                       onPressed: () async {
-                        final file = await ImagePicker()
-                            .pickImage(source: ImageSource.gallery);
+                        final file = await ImagePicker().pickImage(source: ImageSource.gallery);
 
                         if (file == null) return;
 
-                        String fileName =
-                            DateTime.now().microsecondsSinceEpoch.toString();
+                        String fileName = DateTime.now().microsecondsSinceEpoch.toString();
 
                         Reference referenceRoot = FirebaseStorage.instance.ref();
                         Reference referenceDireImages = referenceRoot.child('images');
@@ -93,8 +91,7 @@ class _FoodState extends State<Food> {
 
                         try {
                           await referenceImageToUpload.putFile(File(file.path));
-                          imageUrl =
-                              await referenceImageToUpload.getDownloadURL();
+                          imageUrl = await referenceImageToUpload.getDownloadURL();
                           print("Image uploaded to: $imageUrl");
                         } catch (error) {
                           print("File not uploaded: $error");
@@ -163,7 +160,7 @@ class _FoodState extends State<Food> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Food Menu"),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.teal,
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _items.snapshots(),

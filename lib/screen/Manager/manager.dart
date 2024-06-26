@@ -13,6 +13,7 @@ class Manager extends StatefulWidget {
 class _ManagerState extends State<Manager> {
   late SharedPref pref;
   late Future<String> _currentUserFuture;
+  final TextEditingController _roleController = TextEditingController();
 
   @override
   void initState() {
@@ -24,6 +25,7 @@ class _ManagerState extends State<Manager> {
     pref = SharedPref();
     await pref.init();
     String currentUser = pref.getValue("USER") ?? "Manager";
+    _roleController.text = pref.getValue("ROLE") ?? "Manager";
     return currentUser;
   }
 
@@ -31,8 +33,8 @@ class _ManagerState extends State<Manager> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manager'),
-        backgroundColor: Colors.green,
+        title: const Text('Manager Dashboard'),
+        backgroundColor: Colors.teal,
       ),
       body: FutureBuilder<String>(
         future: _currentUserFuture,
@@ -44,12 +46,65 @@ class _ManagerState extends State<Manager> {
           }
           if (snapshot.hasError) {
             return Center(
-              child: Text('Error: ${snapshot.error}'),
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: TextStyle(color: Colors.red, fontSize: 18),
+              ),
             );
           }
           String currentUser = snapshot.data ?? "Manager";
           return Center(
-            child: Text("Hello, $currentUser"),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.grey[200],
+                    child: CircleAvatar(
+                      radius: 45,
+                      backgroundColor: Colors.white,
+                      child: Icon(
+                        Icons.person,
+                        size: 50,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  Text(
+                    "Hello, $currentUser",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Role: ${_roleController.text}",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.grey[700],
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/logout");
+                    },
+                    icon: Icon(Icons.logout),
+                    label: Text("Logout"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red,
+                      padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      textStyle: TextStyle(fontSize: 18),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           );
         },
       ),

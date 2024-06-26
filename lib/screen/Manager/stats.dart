@@ -12,6 +12,7 @@ class Stats extends StatefulWidget {
 
 class _StatsState extends State<Stats> {
   Map<String, int> foodItemCount = {};
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -22,56 +23,61 @@ class _StatsState extends State<Stats> {
   Future<void> getFoodCounter() async {
     foodItemCount = await fetchFoodItemsCount();
     print(foodItemCount);
-    setState(() {}); // Trigger a rebuild to display the fetched data
+    setState(() {
+      isLoading = false; // Data fetching complete, stop loading
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-    appBar: AppBar(
-      title: const Text('Stats'),
-      backgroundColor: Colors.green,
-    ),
-    body: Center(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              "Food Item Counts:",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 20),
-            if (foodItemCount.isNotEmpty)
-              Column(
-                children: foodItemCount.entries
-                  .map((entry) => Text(
-                    "${entry.key}: ${entry.value}",
-                    style: const TextStyle(
-                      fontSize: 18,
+      appBar: AppBar(
+        title: const Text('Stats'),
+        backgroundColor: Colors.teal,
+      ),
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: isLoading
+              ? const CircularProgressIndicator() // Show loader while loading
+              : foodItemCount.isNotEmpty
+                  ? DataTable(
+                      columns: const <DataColumn>[
+                        DataColumn(
+                          label: Text(
+                            'Food Item',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                        DataColumn(
+                          label: Text(
+                            'Count',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      ],
+                      rows: foodItemCount.entries
+                          .map(
+                            (entry) => DataRow(
+                              cells: <DataCell>[
+                                DataCell(Text(entry.key)),
+                                DataCell(Text(entry.value.toString())),
+                              ],
+                            ),
+                          )
+                          .toList(),
+                    )
+                  : const Text(
+                      "No data available",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.red,
+                      ),
                     ),
-                  ))
-                  .toList(),
-              )
-            else
-              const Text(
-                "No data available",
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Colors.red,
-                ),
-              ),
-          ],
         ),
       ),
-    ),
-    drawer: const MyDrawer(),
-    // bottomNavigationBar: const Footer(),
-  );
+      drawer: const MyDrawer(),
+      // bottomNavigationBar: const Footer(),
+    );
   }
 }

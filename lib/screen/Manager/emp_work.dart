@@ -14,6 +14,7 @@ class _EmpWorkState extends State<EmpWork> {
   List<String> waiters = [];
   String? selectedWaiter;
   List<Map<String, dynamic>> orders = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -22,6 +23,9 @@ class _EmpWorkState extends State<EmpWork> {
   }
 
   Future<void> getWaitersData() async {
+    setState(() {
+      isLoading = true;
+    });
     List<dynamic> fetchedUsers = await getAllUsers();
     if (fetchedUsers.isNotEmpty) {
       for (var user in fetchedUsers) {
@@ -35,14 +39,21 @@ class _EmpWorkState extends State<EmpWork> {
         }
       }
     }
+    setState(() {
+      isLoading = false;
+    });
   }
 
   // Method to fetch orders by waiter
   Future<void> fetchOrdersByWaiter() async {
     if (selectedWaiter != null) {
+      setState(() {
+        isLoading = true;
+      });
       List<Map<String, dynamic>> result = await getOrdersByWaiter(selectedWaiter!);
       setState(() {
         orders = result;
+        isLoading = false;
       });
     }
   }
@@ -52,63 +63,111 @@ class _EmpWorkState extends State<EmpWork> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Emp Work'),
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.teal,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            DropdownButton<String>(
-              value: selectedWaiter,
-              onChanged: (String? newValue) {
-                setState(() {
-                  selectedWaiter = newValue;
-                  // Fetch orders when a new waiter is selected
-                  fetchOrdersByWaiter();
-                });
-              },
-              items: waiters.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            SizedBox(height: 20),
-            Text(
-              'Selected Waiter: ${selectedWaiter ?? "None"}',
-              style: TextStyle(fontSize: 16),
-            ),
-            SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                itemCount: orders.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text('Table: ${orders[index]["table_no"].toString().split(" ")[1]}'),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Food Items:'),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: (orders[index]["food_items"] as Map<String, dynamic>)
-                              .entries
-                              .map<Widget>((entry) {
-                            return Text('• ${entry.key}: ${entry.value}');
-                          }).toList(),
-                        ),
-                        Text('Is Paid: ${orders[index]["is_paid"]}'),
-                        // Add more fields as needed
-                      ],
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    DropdownButton<String>(
+                      value: selectedWaiter,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedWaiter = newValue;
+                          // Fetch orders when a new waiter is selected
+                          fetchOrdersByWaiter();
+                        });
+                      },
+                      hint: Text('Select a waiter'),
+                      icon: Icon(Icons.arrow_downward),
+                      iconSize: 24,
+                      elevation: 16,
+                      style: TextStyle(color: Colors.deepPurple),
+                      underline: Container(
+                        height: 2,
+                        color: Colors.deepPurpleAccent,
+                      ),
+                      items: waiters.map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
                     ),
-                  );
-                },
+                    // SizedBox(height: 20),
+                    // Text(
+                    //   'Selected Waiter: ${selectedWaiter ?? "None"}',
+                    //   style: TextStyle(fontSize: 16),
+                    // ),
+                    SizedBox(height: 20),
+                    Expanded(
+                      child: orders.isEmpty
+                          ? Center(
+                              child: Text(
+                                'No Order Placed Yet',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            )
+                          : ListView.builder(
+                              itemCount: orders.length,
+                              itemBuilder: (context, index) {
+                                bool isPaid = orders[index]["is_paid"];
+                                return Card(
+                                  elevation: 4.0,
+                                  margin: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15.0),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Table: ${orders[index]["table_no"].toString().split(" ")[1]}',
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          'Food Items:',
+                                          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                                        ),
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: (orders[index]["food_items"] as Map<String, dynamic>)
+                                              .entries
+                                              .map<Widget>((entry) {
+                                            return Text('• ${entry.key}: ${entry.value}');
+                                          }).toList(),
+                                        ),
+                                        SizedBox(height: 10),
+                                        Text(
+                                          isPaid ? 'Paid' : 'Not Paid',
+                                          style: TextStyle(
+                                            color: isPaid ? Colors.green : Colors.red,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        // Add more fields as needed
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
-      ),
       drawer: const MyDrawer(),
       // bottomNavigationBar: const Footer(),
     );
