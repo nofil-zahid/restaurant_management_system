@@ -34,7 +34,7 @@ List<_MyAppRoute.Router> routeArr = [
 
   _MyAppRoute.Router(title: "Loading", icon: Icons.logout, routeLink: "/loading-screen", widget: const LoadingScreen(), allowedRoles: []),
   _MyAppRoute.Router(title: "", icon: Icons.plumbing, routeLink: "/login", widget: const LoginScreen(), allowedRoles: []),
-  _MyAppRoute.Router(title: "Logout", icon: Icons.logout, routeLink: "/logout", widget: LogoutScreen(), allowedRoles: ["manager", "admin", "waiter"]),
+  _MyAppRoute.Router(title: "Logout", icon: Icons.logout, routeLink: "/logout", widget: LogoutScreen(), allowedRoles: []),
 
 ];
 
