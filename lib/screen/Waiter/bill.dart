@@ -37,12 +37,19 @@ class _BillState extends State<Bill> {
                 List<String> foodItems = (order['food_items'] as Map<String, dynamic>).keys.toList();
                 return Card(
                   margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  elevation: 5,
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Table: ${order['table_no'].toString().split(" ")[1]}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text(
+                          'Table: ${order['table_no'].toString().split(" ")[1]}',
+                          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                         const SizedBox(height: 8.0),
                         Text('Waiter: ${order['waiter'].toString()}', style: const TextStyle(fontSize: 16)),
                         const SizedBox(height: 8.0),
@@ -63,6 +70,13 @@ class _BillState extends State<Bill> {
                               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Error updating order')));
                             }
                           },
+                          style: ElevatedButton.styleFrom(
+                            foregroundColor: Colors.white, backgroundColor: Colors.green,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 20.0),
+                          ),
                           child: const Text('Paid'),
                         ),
                       ],
