@@ -1,16 +1,77 @@
-# restaurant_management_system
+# Restaurant Management App
 
-A new Flutter project.
+A comprehensive Restaurant Management System built using Flutter and Firebase, designed to streamline the operations of a restaurant, including managing orders, reservations, inventory, and customer interactions.
 
-## Getting Started
+## Features
 
-This project is a starting point for a Flutter application.
+- **Order Management**: Create, update, and track orders efficiently.
+- **Reservation System**: Manage table reservations with ease.
+- **Inventory Management**: Keep track of stock levels and manage supplies.
+- **Customer Management**: Maintain customer profiles and interaction history.
+- **Analytics Dashboard**: Visualize key metrics and performance indicators.
+- **Multi-Platform**: Available on both Android and iOS platforms.
 
-A few resources to get you started if this is your first Flutter project:
+## Technologies Used
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **Flutter**: The UI toolkit for building natively compiled applications for mobile from a single codebase.
+- **Firebase**:
+  - **Cloud Firestore**: Store and sync app data in real-time.
+  - **Firebase Storage**: Store user-generated content such as images.
+  - **Firebase Analytics**: Track user behavior and app usage.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Folder Structure
+
+```plaintext
+lib
+│   firebase_options.dart
+│   main.dart
+│
+├───classes
+│       menu_item.dart
+│       route.dart
+│
+├───database
+│       firestore_services.dart
+│
+├───model
+│       customer_model.dart
+│       food_menu_model.dart
+│       order_placement_model.dart
+│       role_model.dart
+│       table_model.dart
+│       user_model.dart
+│
+├───routes
+│       footer_routes.dart
+│       routes.dart
+│       sidebar_routes.dart
+│
+├───screen
+│   │   Home.dart
+│   │   LoadingPage.dart
+│   │   Login.dart
+│   │   Logout.dart
+│   │   Register.dart
+│   │
+│   ├───Manager
+│   │       emp_register.dart
+│   │       emp_work.dart
+│   │       food.dart
+│   │       manager.dart
+│   │       stats.dart
+│   │
+│   └───Waiter
+│           bill.dart
+│           order_manage.dart
+│           table_manage.dart
+│           waiter.dart
+│
+├───services
+│       SharedPref_Helper.dart
+│
+├───utils
+└───widgets
+        drawer.dart
+        footer.dart
+        table_grid.dart
+```
