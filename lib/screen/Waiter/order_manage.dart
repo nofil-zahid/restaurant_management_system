@@ -19,7 +19,7 @@ class _OrderManageState extends State<OrderManage> {
   List<String> foodPriceList = [];
   List<String> foodUnit = [];
   List<String> foodImages = [];
-  
+
   List<String> tableList = [];
   String selectedTable = "Table #";
 
@@ -102,7 +102,7 @@ class _OrderManageState extends State<OrderManage> {
       if (cartItems.containsKey(item)) {
         cartItems[item] = cartItems[item]! + 1;
       } else {
-        cartItems[item] = 1;
+        cartItems[item] = 1; 
       }
     });
   }
@@ -235,8 +235,6 @@ class _OrderManageState extends State<OrderManage> {
                                 });
                               },
                             ),
-                            // const SizedBox(height: 8.0),
-                            // Text(selectedTable),
                           ],
                         ),
                       ),
@@ -319,7 +317,7 @@ class _OrderManageState extends State<OrderManage> {
                                                 ),
                                               ),
                                               child: const Center(
-                                                child: Icon(Icons.error),
+                                                child: Icon(Icons.fastfood, size: 50, color: Colors.red),
                                               ),
                                             );
                                           },
@@ -332,11 +330,7 @@ class _OrderManageState extends State<OrderManage> {
                                             ),
                                           ),
                                           child: const Center(
-                                            child: Text(
-                                              'Image not available',
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(fontSize: 10),
-                                            ),
+                                            child: Icon(Icons.fastfood, size: 50, color: Colors.red),
                                           ),
                                         ),
                                 ),
